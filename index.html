@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录注册界面</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="./script/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript">
+        $(function (){
+            var strcookie = document.cookie;//获取cookie字符串
+            var arrcookie = strcookie.split("; ");//分割
+            //遍历匹配
+            for ( var i = 0; i < arrcookie.length; i++) {
+                var arr = arrcookie[i].split("=");
+                if (arr[0] == "account") {
+                    $("#account").val(arr[1]);
+                }
+                if (arr[0] == "password") {
+                    $("#password").val(arr[1]);
+                }
+            }
+        })
+        function checkrules() {
+            var check = document.getElementById("rules");
+            if (check.checked == true) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function checkPwdZ() {
+            if (!checkrules()) {
+                alert('您尚未同意用户准则');
+            } else{
+                login();
+            }
+        }
+        function login(){
+            var information = $("#user-label").serialize();
+            $.ajax({
+                url: "http://localhost:8080/account_war_exploded/LoginRegistServlet?action=login&" + information,
+                type: "POST",
+                success:function(text){
+                    if (text != ""){
+                        $("#error-user").text(text);
+                    }else{
+                        window.location.href = "./page/MainActivity.html";
+                    }
+                }
+            })
+        }
+    </script>
+</head>
+
+<body>
+    <div class="box">
+        <!-- 登录 -->
+        <div class="login">
+            <div class="login_top">
+                <img src="./img/logo.png" alt="头像">
+                <h2>Welcome to Login</h2>
+            </div>
+            <div class="login_bottom">
+                <form id="user-label">
+                    <!-- 邮箱/手机号输入框 -->
+                    <input type="text" class="input" id="account" placeholder="请输入您的邮箱或手机号" name="account"/>
+                    <!-- 密码输入框 -->
+                    <input type="Password" class="input" id="password" placeholder="请输入您的密码" name="password"/>
+                </form>
+                <!-- 确认框/忘记密码（ -->
+                <p>
+                    <input type="checkbox" id='rules'>
+                    <span>I agree to follow the rules.</span>
+                    <a href="#">Reset Password</a>
+                </p>
+                <span id="error-user"></span>
+                <!-- 登录按钮（判断邮箱手机号是否存在，判断邮箱手机号与密码是否一致，判断用户是否同意遵循用户守则） -->
+                <button onclick="checkPwdZ()" id="login">Open Sesame</button>
+                <p>
+                    <span>New to our website?</span>
+                    <a href="page/register.html">Signup</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
