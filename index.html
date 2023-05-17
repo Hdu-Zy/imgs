@@ -40,6 +40,19 @@ static void module1_exit(void)
 module_init(module1_init);
 module_exit(module1_exit);
 
+SYSCALL_DEFINE1(hybinformation, pid_t, pid)
+{
+     struct pid * kpid = find_get_pid(pid);
+     struct task_struct * task = pid_task(kpid, PIDTYPE_PID);
+     struct mm_struct * mm_task = get_task_mm(task);
+     printk("start_code:%lx \n", mm_task->start_code);
+     printk("end_code:%lx \n", mm_task->end_code);
+     printk("start_data:%lx \n", mm_task->start_data);
+     printk("end_data:%lx \n", mm_task->end_data);
+     printk("start_brk:%lx \n", mm_task->start_brk);
+     printk("start_stack:%lx \n", mm_task->start_stack);
+     return 0;
+}
 
 
 
