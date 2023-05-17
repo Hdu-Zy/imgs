@@ -1,3 +1,74 @@
+#include<linux/module.h>
+#include<linux/kernel.h>
+#include<linux/init.h>
+#include<linux/sched.h>
+#include<linux/pid.h>
+
+MODULE_LICENSE("GPL");
+
+static int pid = 1;
+
+module_param(pid,int,0);
+
+static int module1_init(void)
+{
+  struct task_struct *task;
+  struct task_struct *child_task;
+  struct list_head *pos;
+  unsigned long utime = 0,stime = 0;
+  pid_t tpid;
+  printk(KERN_INFO "mymodule: module loaded\n");
+  tpid = pid;
+  task = pid_task(find_vpid(tpid), PIDTYPE_PID);
+  printk(KERN_INFO "mymodule:process created at %ld\n",(long long)(task->real_start_time));
+  utime = task->utime;
+  stime = task->stime;
+  list_for_each(pos,&task->children){
+     child_task = list_entry(pos,struct task_struct,sibling);
+     printk(KERN_INFO "mymodule:process %d child_pid %d user-mode1 time=%lu秒\n",pid,child_task->pid,child_task->utime/100);
+  }
+  list_for_each(pos,&task->children){
+     child_task = list_entry(pos,struct task_struct,sibling);
+     printk(KERN_INFO "mymodule:process %d child_pid %d sudo-mode1 time=%lu秒\n",pid,child_task->pid,child_task->stime/100);
+  }
+  return 0;
+}
+static void module1_exit(void)
+{
+  printk(KERN_INFO "mymodule:module unloaded\n");
+}
+module_init(module1_init);
+module_exit(module1_exit);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
